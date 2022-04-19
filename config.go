@@ -3,7 +3,7 @@ package egorm
 import (
 	"time"
 
-	"github.com/gotomicro/ego-component/egorm/manager"
+	"github.com/ego-component/egorm/manager"
 	"github.com/gotomicro/ego/core/util/xtime"
 )
 

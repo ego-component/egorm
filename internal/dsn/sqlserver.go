@@ -2,10 +2,11 @@ package dsn
 
 import (
 	"fmt"
-	"github.com/gotomicro/ego-component/egorm/manager"
+	"strings"
+
+	"github.com/ego-component/egorm/manager"
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
-	"strings"
 )
 
 var (

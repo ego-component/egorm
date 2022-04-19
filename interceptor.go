@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gotomicro/ego-component/egorm/manager"
+	"github.com/ego-component/egorm/manager"
 	"github.com/gotomicro/ego/core/eapp"
 	"github.com/gotomicro/ego/core/elog"
 	"github.com/gotomicro/ego/core/emetric"

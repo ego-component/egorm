@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/ego-component/egorm"
 	"github.com/gotomicro/ego"
-	"github.com/gotomicro/ego-component/egorm"
 	"github.com/gotomicro/ego/core/elog"
 	"github.com/gotomicro/ego/examples/helloworld"
 	"github.com/gotomicro/ego/server"

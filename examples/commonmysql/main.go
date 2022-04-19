@@ -6,7 +6,7 @@ import (
 	"github.com/gotomicro/ego"
 	"github.com/gotomicro/ego/core/elog"
 
-	"github.com/gotomicro/ego-component/egorm"
+	"github.com/ego-component/egorm"
 )
 
 // 1.新建一个数据库叫test

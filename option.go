@@ -1,7 +1,7 @@
 package egorm
 
 import (
-	"github.com/gotomicro/ego-component/egorm/manager"
+	"github.com/ego-component/egorm/manager"
 )
 
 // Option 可选项
