@@ -16,7 +16,7 @@ import (
 	"github.com/gotomicro/ego/core/emetric"
 	"github.com/gotomicro/ego/core/etrace"
 	"github.com/gotomicro/ego/core/transport"
-	"github.com/gotomicro/ego/core/util/xcolor"
+	"github.com/gotomicro/ego/core/util/xdebug"
 	"github.com/spf13/cast"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -49,28 +49,16 @@ func debugInterceptor(compName string, dsn *manager.DSN, op string, options *con
 			cost := time.Since(beg)
 			if db.Error != nil {
 				log.Println("[egorm.response]",
-					makeReqResError(fileWithLineNum(), compName, fmt.Sprintf("%v", dsn.Addr+"/"+dsn.DBName), cost, logSQL(db, true), db.Error.Error()),
+					xdebug.MakeReqAndResError(fileWithLineNum(), compName, fmt.Sprintf("%v", dsn.Addr+"/"+dsn.DBName), cost, logSQL(db, true), db.Error.Error()),
 				)
 			} else {
 				log.Println("[egorm.response]",
-					makeReqResInfo(fileWithLineNum(), compName, fmt.Sprintf("%v", dsn.Addr+"/"+dsn.DBName), cost, logSQL(db, true), fmt.Sprintf("%v", db.Statement.Dest)),
+					xdebug.MakeReqAndResInfo(fileWithLineNum(), compName, fmt.Sprintf("%v", dsn.Addr+"/"+dsn.DBName), cost, logSQL(db, true), fmt.Sprintf("%v", db.Statement.Dest)),
 				)
 			}
 
 		}
 	}
-}
-
-func fileWithLineNum() string {
-	// the second caller usually from gorm internal, so set i start from 2
-	for i := 2; i < 15; i++ {
-		_, file, line, ok := runtime.Caller(i)
-		if ok && ((!strings.Contains(file, "github/ego-component/egorm/interceptor") && !strings.Contains(file, "gorm.io/gorm")) || strings.HasSuffix(file, "_test.go")) {
-			return file + ":" + strconv.FormatInt(int64(line), 10)
-		}
-	}
-
-	return ""
 }
 
 func metricInterceptor(compName string, dsn *manager.DSN, op string, config *config, logger *elog.Component) func(Handler) Handler {
@@ -205,12 +193,16 @@ func peerInfo(addr string) (hostname string, port int) {
 	return hostname, port
 }
 
-// makeReqResError 以error级别打印行号、配置名、目标地址、耗时、请求数据、响应数据
-func makeReqResError(line string, compName string, addr string, cost time.Duration, req string, err string) string {
-	return fmt.Sprintf("%s %s %s %s %s => %s", xcolor.Green(line), xcolor.Red(compName), xcolor.Red(addr), xcolor.Yellow(fmt.Sprintf("[%vms]", float64(cost.Microseconds())/1000)), xcolor.Blue(fmt.Sprintf("%v", req)), xcolor.Red(err))
-}
-
-// makeReqResInfo 以info级别打印行号、配置名、目标地址、耗时、请求数据、响应数据
-func makeReqResInfo(line string, compName string, addr string, cost time.Duration, req interface{}, reply interface{}) string {
-	return fmt.Sprintf("%s %s %s %s %s => %s", xcolor.Green(line), xcolor.Green(compName), xcolor.Green(addr), xcolor.Yellow(fmt.Sprintf("[%vms]", float64(cost.Microseconds())/1000)), xcolor.Blue(fmt.Sprintf("%v", req)), xcolor.Blue(fmt.Sprintf("%v", reply)))
+func fileWithLineNum() string {
+	// the second caller usually from internal, so set i start from 2
+	for i := 2; i < 15; i++ {
+		_, file, line, ok := runtime.Caller(i)
+		if !ok {
+			break
+		}
+		if (!strings.HasSuffix(file, "github/ego-component/egorm/interceptor.go") && !strings.Contains(file, "gorm.io/gorm")) || strings.HasSuffix(file, "_test.go") {
+			return file + ":" + strconv.FormatInt(int64(line), 10)
+		}
+	}
+	return ""
 }
