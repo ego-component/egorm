@@ -13,7 +13,7 @@
 
 ```bash
 git clone https://github.com/ego-component/egorm.git
-cd ego
+cd egorm
 git remote add upstream 'git@github.com:<your github username>/egorm.git'
 ```
 upstream可以替换为任何你喜欢的名字。比如说你的用户名，你的昵称，或者直接使用me。后面的命令也要执行相应的替换。
