@@ -7,8 +7,9 @@
 - 提供了默认的 Metric 拦截器，开启后可采集 Prometheus 指标数据
 - 提供了默认的 OpenTelemetry 拦截器，开启后可采集 Tracing Span 数据
 
-## 2 Example
-* [项目地址](https://github.com/ego-component/egorm/tree/master/examples)
+## 2 说明
+* [example地址](https://github.com/ego-component/egorm/tree/master/examples)
+* [文档地址](https://ego.gocn.vip/frame/client/gorm.html#_1-%E7%AE%80%E4%BB%8B)
 * ego版本：``ego@v1.0.0``
 * egorm版本: ``egorm@1.0.0``
 
