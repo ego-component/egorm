@@ -8,10 +8,10 @@
 #   maxOpenConns = 100
 #   disableTrace = false
 #   disableMetric = false
-#   enableDetailSQL = false
-#   enableAccessInterceptor = true
-#   enableAccessInterceptorReq = true
-#   enableAccessInterceptorRes = true
+   enableDetailSQL = true
+   enableAccessInterceptor = true
+   enableAccessInterceptorReq = true
+   enableAccessInterceptorRes = true
 
 
 [pg.test]

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/gotomicro/ego"
 	"github.com/gotomicro/ego/core/elog"
 
@@ -55,7 +57,7 @@ func openDB() error {
 func testDB() error {
 	var user User
 	for _, db := range DBs {
-		err := db.Where("id = ?", 100).First(&user).Error
+		err := db.WithContext(context.Background()).Where("id = ?", 100).First(&user).Error
 		elog.Info("user info", elog.String("name", user.Nickname), elog.FieldErr(err))
 	}
 	return nil
