@@ -116,7 +116,7 @@ func testDB() error {
 ### 6.1 开启GORM的access日志
 线上在并发量不高，或者核心业务下可以开启全量access日志，这样方便我们排查问题
 
-#### 6.2 开启日志方式
+### 6.2 开启日志方式
 在原有的mysql配置中，加入以下三行配置，gorm的日志里就会记录响应的数据
 ```toml
 [mysql.test]
@@ -127,7 +127,7 @@ enableAccessInterceptorRes=true    # 是否开启记录响应参数
 
 ![img.png](https://cdn.gocn.vip/ego/assets/img/enable_req_res.89087f89.png)
 
-#### 6.3 开启日志的详细数据
+### 6.3 开启日志的详细数据
 记录请求参数日志为了安全起见，默认是不开启详细的sql数据，记录的是参数绑定的SQL日志，如果需要开启详细数据，需要在配置里添加``
 ```toml
 [mysql.test]
@@ -135,10 +135,10 @@ enableDetailSQL=true       # 记录sql时,是否打印包含参数的完整sql�
 ```
 ![img.png](https://cdn.gocn.vip/ego/assets/img/enable_req_res_detail.c932d5dc.png)
 
-#### 6.4 开启日志的链路数据
+### 6.4 开启日志的链路数据
 代码方面使用`db.WithContext(ctx)`，会在access日志中自动记录trace id信息
 
-#### 6.5 开启自定义日志字段的数据
+### 6.5 开启自定义日志字段的数据
 在使用了ego的自定义字段功能`export EGO_LOG_EXTRA_KEYS=X-Ego-Uid`，将对应的数据塞入到context中，那么gorm的access日志就可以记录对应字段信息。
 参考[详细文档](https://ego.gocn.vip/micro/chapter2/trace.html#_6-ego-access-%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE%E8%B7%AF)：
 ```go
