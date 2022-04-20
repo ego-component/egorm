@@ -200,7 +200,7 @@ func fileWithLineNum() string {
 		if !ok {
 			break
 		}
-		if (!strings.HasSuffix(file, "github/ego-component/egorm/interceptor.go") && !strings.Contains(file, "gorm.io/gorm")) || strings.HasSuffix(file, "_test.go") {
+		if (!(strings.Contains(file, "ego-component/egorm") && strings.HasSuffix(file, "interceptor.go")) && !strings.Contains(file, "gorm.io/gorm")) || strings.HasSuffix(file, "_test.go") {
 			return file + ":" + strconv.FormatInt(int64(line), 10)
 		}
 	}
