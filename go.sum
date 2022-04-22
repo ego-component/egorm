@@ -250,6 +250,8 @@ github.com/gotomicro/ego v1.0.3-0.20220422070748-176e440234da h1:ZauvwRtLGRNv5CA
 github.com/gotomicro/ego v1.0.3-0.20220422070748-176e440234da/go.mod h1:Pjt+5kIVGMqzpKYMxeN4s/Dc2TrNO9R58yQwt9zoXck=
 github.com/gotomicro/ego v1.0.3-0.20220422071445-06ba13cdf8da h1:uRKP4aMm1+Uh/iPObNcLq4oHBCNW78h171CGhB7CKZQ=
 github.com/gotomicro/ego v1.0.3-0.20220422071445-06ba13cdf8da/go.mod h1:Pjt+5kIVGMqzpKYMxeN4s/Dc2TrNO9R58yQwt9zoXck=
+github.com/gotomicro/ego v1.0.3 h1:wSuS/AI3HV8r5Gro5oG2qlCAfQ/skDDs6GXedEqJRj4=
+github.com/gotomicro/ego v1.0.3/go.mod h1:Pjt+5kIVGMqzpKYMxeN4s/Dc2TrNO9R58yQwt9zoXck=
 github.com/gotomicro/logrotate v0.0.0-20211108024517-45d1f9a03ff5 h1:y9nw0S0zlla/SBt1GGaTNNCF+781epJ62MntVVbekqQ=
 github.com/gotomicro/logrotate v0.0.0-20211108024517-45d1f9a03ff5/go.mod h1:jKlh8i9m79fE8HAO28kYLN70l87bb7olTLuX/Blex/U=
 github.com/grpc-ecosystem/go-grpc-middleware v1.0.1-0.20190118093823-f849b5445de4/go.mod h1:FiyG127CGDf3tlThmgyCl78X/SZQqEOJBCDaAfeWzPs=
