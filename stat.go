@@ -31,15 +31,17 @@ func monitor() {
 				return false
 			}
 			stats := sqlDB.Stats()
+			// Gauge指标
 			emetric.ClientStatsGauge.Set(float64(stats.MaxOpenConnections), emetric.TypeGorm, name, "max_open_connections")
 			emetric.ClientStatsGauge.Set(float64(stats.OpenConnections), emetric.TypeGorm, name, "open_connections")
 			emetric.ClientStatsGauge.Set(float64(stats.InUse), emetric.TypeGorm, name, "in_use")
 			emetric.ClientStatsGauge.Set(float64(stats.Idle), emetric.TypeGorm, name, "idle")
-			emetric.ClientStatsGauge.Set(float64(stats.WaitCount), emetric.TypeGorm, name, "wait_count")
-			emetric.ClientStatsGauge.Set(float64(stats.WaitDuration), emetric.TypeGorm, name, "wait_duration")
 			emetric.ClientStatsGauge.Set(float64(stats.MaxIdleClosed), emetric.TypeGorm, name, "max_idle_closed")
 			emetric.ClientStatsGauge.Set(float64(stats.MaxIdleTimeClosed), emetric.TypeGorm, name, "max_idle_time_closed")
 			emetric.ClientStatsGauge.Set(float64(stats.MaxLifetimeClosed), emetric.TypeGorm, name, "max_lifetime_closed")
+			// 以下数据为db里的累加值，如果要看瞬时的，需要在metric里使用irate
+			emetric.ClientStatsGauge.Set(float64(stats.WaitCount), emetric.TypeGorm, name, "wait_count")
+			emetric.ClientStatsGauge.Set(float64(stats.WaitDuration.Milliseconds()/1000), emetric.TypeGorm, name, "wait_duration")
 			return true
 		})
 	}
