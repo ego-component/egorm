@@ -3,6 +3,7 @@ package egorm
 import (
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/gotomicro/ego/core/elog"
 	"github.com/gotomicro/ego/core/emetric"
@@ -44,6 +45,7 @@ func monitor() {
 			emetric.ClientStatsGauge.Set(float64(stats.WaitDuration.Milliseconds()/1000), emetric.TypeGorm, name, "wait_duration")
 			return true
 		})
+		time.Sleep(time.Second * 10)
 	}
 }
 
