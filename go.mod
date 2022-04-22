@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/gotomicro/ego v1.0.3-0.20220422043740-dd25289ced38
+	github.com/gotomicro/ego v1.0.3-0.20220422071445-06ba13cdf8da
 	github.com/json-iterator/go v1.1.12
 	github.com/spf13/cast v1.3.1
 	github.com/stretchr/testify v1.7.0
