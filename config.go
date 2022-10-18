@@ -3,8 +3,9 @@ package egorm
 import (
 	"time"
 
-	"github.com/ego-component/egorm/manager"
 	"github.com/gotomicro/ego/core/util/xtime"
+
+	"github.com/ego-component/egorm/manager"
 )
 
 // config options
@@ -20,6 +21,7 @@ type config struct {
 	SlowLogThreshold           time.Duration // 慢日志阈值，默认500ms
 	EnableMetricInterceptor    bool          // 是否开启监控，默认开启
 	EnableTraceInterceptor     bool          // 是否开启链路追踪，默认开启
+	TraceRecordErrorOnNotFound bool          // 链路里是否记录 NotFound 错误，默认不记录
 	EnableDetailSQL            bool          // 记录错误sql时,是否打印包含参数的完整sql语句，select * from aid = ?;
 	EnableAccessInterceptor    bool          // 是否开启，记录请求数据
 	EnableAccessInterceptorReq bool          // 是否开启记录请求参数
