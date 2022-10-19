@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ego-component/egorm/manager"
 	"github.com/gotomicro/ego/core/eapp"
 	"github.com/gotomicro/ego/core/elog"
 	"github.com/gotomicro/ego/core/emetric"
@@ -23,6 +22,8 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.7.0"
 	"go.opentelemetry.io/otel/trace"
 	"gorm.io/gorm"
+
+	"github.com/ego-component/egorm/manager"
 )
 
 // Handler ...
@@ -37,7 +38,7 @@ type Processor interface {
 // Interceptor ...
 type Interceptor func(string, *manager.DSN, string, *config, *elog.Component) func(next Handler) Handler
 
-func debugInterceptor(compName string, dsn *manager.DSN, op string, options *config, logger *elog.Component) func(Handler) Handler {
+func debugInterceptor(compName string, dsn *manager.DSN, _ string, _ *config, _ *elog.Component) func(Handler) Handler {
 	return func(next Handler) Handler {
 		return func(db *gorm.DB) {
 			if !eapp.IsDevelopmentMode() {
@@ -134,7 +135,7 @@ func logSQL(db *gorm.DB, enableDetailSQL bool) string {
 	return db.Statement.SQL.String()
 }
 
-func traceInterceptor(compName string, dsn *manager.DSN, op string, options *config, logger *elog.Component) func(Handler) Handler {
+func traceInterceptor(compName string, dsn *manager.DSN, _ string, options *config, _ *elog.Component) func(Handler) Handler {
 	ip, port := peerInfo(dsn.Addr)
 	attrs := []attribute.KeyValue{
 		semconv.NetHostIPKey.String(ip),
@@ -164,7 +165,11 @@ func traceInterceptor(compName string, dsn *manager.DSN, op string, options *con
 					semconv.NetPeerNameKey.String(dsn.Addr),
 					attribute.Int64("db.rows_affected", db.RowsAffected),
 				)
-				if db.Error != nil {
+				var err = db.Error
+				if !options.TraceRecordErrorOnNotFound && errors.Is(err, gorm.ErrRecordNotFound) {
+					err = nil
+				}
+				if err != nil {
 					span.RecordError(db.Error)
 					span.SetStatus(codes.Error, db.Error.Error())
 					return
