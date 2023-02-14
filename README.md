@@ -41,6 +41,8 @@ type Config struct {
     EnableAccessInterceptor    bool          // 是否开启，记录请求数据
     EnableAccessInterceptorReq bool          // 是否开启记录请求参数
     EnableAccessInterceptorRes bool          // 是否开启记录响应参数
+	// TLS 支持
+	Authentication Authentication
 }
 ```
 
@@ -48,8 +50,14 @@ type Config struct {
 ## 5.1 用户配置
 ```toml
 [mysql.test]
-   debug = true # ego重写gorm debug，打开后可以看到，配置名、代码执行行号、地址、耗时、请求数据、响应数据
-   dsn = "root:root@tcp(127.0.0.1:3306)/ego?charset=utf8&parseTime=True&loc=Local&readTimeout=1s&timeout=1s&writeTimeout=3s"
+  debug = true # ego重写gorm debug，打开后可以看到，配置名、代码执行行号、地址、耗时、请求数据、响应数据
+  dsn = "root:root@tcp(127.0.0.1:3306)/ego?charset=utf8&parseTime=True&loc=Local&readTimeout=1s&timeout=1s&writeTimeout=3s"
+  [mysql.test.authentication.tls]
+    enabled=false
+    CAFile="/Users/duminxiang/opt/kafka-setup/data/all-in-one/kafka/config/certs/server.cer.pem"
+    CertFile="/Users/duminxiang/opt/kafka-setup/data/all-in-one/kafka/config/certs/client.cer.pem"
+    KeyFile="/Users/duminxiang/opt/kafka-setup/data/all-in-one/kafka/config/certs/client.key.pem"
+    insecureSkipVerify=true
 ```
 
 ## 5.2 优雅的Debug
