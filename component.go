@@ -3,11 +3,13 @@ package egorm
 import (
 	"context"
 
-	"github.com/ego-component/egorm/manager"
+	"github.com/go-sql-driver/mysql"
 	"github.com/gotomicro/ego/core/elog"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+
+	"github.com/ego-component/egorm/manager"
 )
 
 // PackageName ...
@@ -17,7 +19,7 @@ var (
 	// ErrRecordNotFound returns a "record not found error". Occurs only when attempting to query the database with a struct; querying with a slice won't return this error
 	ErrRecordNotFound = gorm.ErrRecordNotFound
 	// ErrInvalidTransaction occurs when you are trying to `Commit` or `Rollback`
-	//ErrInvalidTransaction = gorm.ErrInvalidTransaction
+	// ErrInvalidTransaction = gorm.ErrInvalidTransaction
 )
 
 type (
@@ -63,16 +65,23 @@ func newComponent(compName string, dsnParser manager.DSNParser, config *config, 
 	if config.RawDebug {
 		db = db.Debug()
 	}
-
 	gormDB, err := db.DB()
 	if err != nil {
 		return nil, err
 	}
 
+	// 加载 TLS 配置
+	tlsConfig := config.Authentication.TLSConfig()
+	if tlsConfig != nil {
+		err = mysql.RegisterTLSConfig("custom", tlsConfig)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	// 设置默认连接配置
 	gormDB.SetMaxIdleConns(config.MaxIdleConns)
 	gormDB.SetMaxOpenConns(config.MaxOpenConns)
-
 	if config.ConnMaxLifetime != 0 {
 		gormDB.SetConnMaxLifetime(config.ConnMaxLifetime)
 	}

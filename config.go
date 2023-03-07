@@ -28,6 +28,8 @@ type config struct {
 	EnableAccessInterceptorRes bool          // 是否开启记录响应参数
 	interceptors               []Interceptor
 	dsnCfg                     *manager.DSN
+	// TLS 参数支持
+	Authentication Authentication
 }
 
 // DefaultConfig 返回默认配置
