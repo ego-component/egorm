@@ -99,7 +99,7 @@ func newComponent(compName string, dsnParser manager.DSNParser, config *config, 
 	replace(db.Callback().Update(), "gorm:update", config.interceptors...)
 	replace(db.Callback().Delete(), "gorm:delete", config.interceptors...)
 	replace(db.Callback().Query(), "gorm:query", config.interceptors...)
-	// replace(db.Callback().Row(), "gorm:row", config.interceptors...)
+	replace(db.Callback().Row(), "gorm:row", config.interceptors...)
 	replace(db.Callback().Raw(), "gorm:raw", config.interceptors...)
 	return db, nil
 }
