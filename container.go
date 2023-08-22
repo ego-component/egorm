@@ -5,6 +5,7 @@ import (
 
 	_ "github.com/ego-component/egorm/internal/dsn"
 	"github.com/ego-component/egorm/manager"
+	"github.com/gotomicro/ego/core/eapp"
 	"github.com/gotomicro/ego/core/econf"
 	"github.com/gotomicro/ego/core/elog"
 	"github.com/gotomicro/ego/core/emetric"
@@ -88,20 +89,42 @@ func (c *Container) Build(options ...Option) *Component {
 	component, err := newComponent(c.name, c.dsnParser, c.config, c.logger)
 	if err != nil {
 		if c.config.OnFail == "panic" {
-			c.logger.Panic("open db", elog.FieldErrKind("register err"), elog.FieldErr(err), elog.FieldAddr(c.config.dsnCfg.Addr), elog.FieldValueAny(c.config))
+			if eapp.IsDevelopmentMode() {
+				c.logger.Panic("open db", elog.FieldErr(err), elog.FieldValueAny(c.config))
+			} else {
+				c.logger.Panic("open db", elog.FieldErr(err), elog.FieldAddr(c.config.dsnCfg.Addr))
+			}
 		} else {
-			emetric.ClientHandleCounter.Inc(emetric.TypeGorm, c.name, c.name+".ping", c.config.dsnCfg.Addr, "open err")
-			c.logger.Error("open db", elog.FieldErrKind("register err"), elog.FieldErr(err), elog.FieldAddr(c.config.dsnCfg.Addr), elog.FieldValueAny(c.config))
+			emetric.ClientHandleCounter.Inc(emetric.TypeGorm, c.name, c.name+".open", c.config.dsnCfg.Addr, "open err")
+			c.logger.Error("open db", elog.FieldErr(err), elog.FieldAddr(c.config.dsnCfg.Addr))
 			return component
 		}
 	}
 
 	sqlDB, err := component.DB()
 	if err != nil {
-		c.logger.Panic("ping db", elog.FieldErrKind("register err"), elog.FieldErr(err), elog.FieldValueAny(c.config))
+		if c.config.OnFail == "panic" {
+			if eapp.IsDevelopmentMode() {
+				c.logger.Panic("ping db", elog.FieldErr(err), elog.FieldValueAny(c.config))
+			} else {
+				c.logger.Panic("ping db", elog.FieldErr(err), elog.FieldAddr(c.config.dsnCfg.Addr))
+			}
+		} else {
+			c.logger.Error("ping db", elog.FieldErr(err), elog.FieldAddr(c.config.dsnCfg.Addr))
+			return component
+		}
 	}
 	if err := sqlDB.Ping(); err != nil {
-		c.logger.Panic("ping db", elog.FieldErrKind("register err"), elog.FieldErr(err), elog.FieldValueAny(c.config))
+		if c.config.OnFail == "panic" {
+			if eapp.IsDevelopmentMode() {
+				c.logger.Panic("ping2 db", elog.FieldErr(err), elog.FieldValueAny(c.config))
+			} else {
+				c.logger.Panic("ping2 db", elog.FieldErr(err), elog.FieldAddr(c.config.dsnCfg.Addr))
+			}
+		} else {
+			c.logger.Error("ping2 db", elog.FieldErr(err), elog.FieldAddr(c.config.dsnCfg.Addr))
+			return component
+		}
 	}
 
 	// store db
