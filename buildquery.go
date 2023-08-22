@@ -12,6 +12,8 @@ import (
 type (
 	// Cond 为字段查询结构体
 	Cond struct {
+		// Connector MySQL中查询条件连接符，如and,or，默认为and
+		Connector string
 		// Op MySQL中查询条件，如like,=,in
 		Op string
 		// Val 查询条件对应的值
@@ -32,49 +34,53 @@ func assertCond(cond interface{}) Cond {
 	// 先尝试断言为基本类型
 	switch v := cond.(type) {
 	case Cond:
+		// 如果没有设置Connector，则默认为AND
+		if v.Connector == "" {
+			v.Connector = "AND"
+		}
 		return v
 	case string:
-		return Cond{"=", v}
+		return Cond{"AND", "=", v}
 	case bool:
-		return Cond{"=", v}
+		return Cond{"AND", "=", v}
 	case float64:
-		return Cond{"=", v}
+		return Cond{"AND", "=", v}
 	case float32:
-		return Cond{"=", v}
+		return Cond{"AND", "=", v}
 	case int:
-		return Cond{"=", v}
+		return Cond{"AND", "=", v}
 	case int64:
-		return Cond{"=", v}
+		return Cond{"AND", "=", v}
 	case int32:
-		return Cond{"=", v}
+		return Cond{"AND", "=", v}
 	case int16:
-		return Cond{"=", v}
+		return Cond{"AND", "=", v}
 	case int8:
-		return Cond{"=", v}
+		return Cond{"AND", "=", v}
 	case uint:
-		return Cond{"=", v}
+		return Cond{"AND", "=", v}
 	case uint64:
-		return Cond{"=", v}
+		return Cond{"AND", "=", v}
 	case uint32:
-		return Cond{"=", v}
+		return Cond{"AND", "=", v}
 	case uint16:
-		return Cond{"=", v}
+		return Cond{"AND", "=", v}
 	case uint8:
-		return Cond{"=", v}
+		return Cond{"AND", "=", v}
 	case time.Duration:
-		return Cond{"=", v}
+		return Cond{"AND", "=", v}
 	}
 
 	// 再尝试断言为stringSlice类型
 	condValueStr, err := cast.ToStringSliceE(cond)
 	if err == nil {
-		return Cond{"in", condValueStr}
+		return Cond{"AND", "in", condValueStr}
 	}
 
 	// 再尝试断言为intSlice类型
 	condValueInt, err := cast.ToIntSliceE(cond)
 	if err == nil {
-		return Cond{"in", condValueInt}
+		return Cond{"AND", "in", condValueInt}
 	}
 
 	// 未识别的类型
@@ -103,31 +109,31 @@ func BuildQuery(conds Conds) (sql string, binds []interface{}) {
 		switch strings.ToLower(condVal.Op) {
 		case "like":
 			if condVal.Val != "" {
-				sql += " AND " + field + " like ?"
+				sql += " " + condVal.Connector + " " + field + " like ?"
 				condVal.Val = "%" + condVal.Val.(string) + "%"
 			}
 		case "%like":
 			if condVal.Val != "" {
-				sql += " AND " + field + " like ?"
+				sql += " " + condVal.Connector + " " + field + " like ?"
 				condVal.Val = "%" + condVal.Val.(string)
 			}
 		case "like%":
 			if condVal.Val != "" {
-				sql += " AND " + field + " like ?"
+				sql += " " + condVal.Connector + " " + field + " like ?"
 				condVal.Val = condVal.Val.(string) + "%"
 			}
 		case "in", "not in":
-			sql += " AND " + field + condVal.Op + " (?) "
+			sql += " " + condVal.Connector + " " + field + condVal.Op + " (?) "
 		case "between":
-			sql += " AND " + field + condVal.Op + " ? AND ?"
+			sql += " " + condVal.Connector + " " + field + condVal.Op + " ? AND ?"
 			val := cast.ToStringSlice(condVal.Val)
 			binds = append(binds, val[0], val[1])
 			continue
 		case "exp":
-			sql += " AND " + field + " ? "
+			sql += " " + condVal.Connector + " " + field + " ? "
 			condVal.Val = gorm.Expr(condVal.Val.(string))
 		default:
-			sql += " AND " + field + condVal.Op + " ? "
+			sql += " " + condVal.Connector + " " + field + condVal.Op + " ? "
 		}
 		binds = append(binds, condVal.Val)
 	}
