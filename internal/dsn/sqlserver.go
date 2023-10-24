@@ -7,6 +7,7 @@ import (
 	"github.com/ego-component/egorm/manager"
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 var (
@@ -22,6 +23,10 @@ func init() {
 
 func (p *SqlServerDSNParser) Scheme() string {
 	return "mssql"
+}
+
+func (p *SqlServerDSNParser) NamingStrategy() schema.Namer {
+	return nil
 }
 
 func (p *SqlServerDSNParser) GetDialector(dsn string) gorm.Dialector {
