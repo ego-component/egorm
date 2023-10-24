@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gotomicro/ego/core/util/xtime"
+	"gorm.io/gorm/schema"
 
 	"github.com/ego-component/egorm/manager"
 )
@@ -30,6 +31,8 @@ type config struct {
 	dsnCfg                     *manager.DSN
 	// TLS 参数支持
 	Authentication Authentication
+	// NamingStrategy tables, columns naming strategy
+	namingStrategy schema.Namer // gorm naming strategy
 }
 
 // DefaultConfig 返回默认配置

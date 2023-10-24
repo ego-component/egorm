@@ -6,6 +6,7 @@ import (
 
 	"gorm.io/driver/clickhouse"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 
 	"github.com/ego-component/egorm/manager"
 )
@@ -24,6 +25,10 @@ func init() {
 
 func (p *ClickHouseDSNParser) Scheme() string {
 	return "clickhouse"
+}
+
+func (p *ClickHouseDSNParser) NamingStrategy() schema.Namer {
+	return nil
 }
 
 func (p *ClickHouseDSNParser) GetDialector(dsn string) gorm.Dialector {

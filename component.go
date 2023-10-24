@@ -3,13 +3,12 @@ package egorm
 import (
 	"context"
 
+	"github.com/ego-component/egorm/manager"
 	"github.com/go-sql-driver/mysql"
 	"github.com/gotomicro/ego/core/elog"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-
-	"github.com/ego-component/egorm/manager"
 )
 
 // PackageName ...
@@ -51,10 +50,17 @@ func WithContext(ctx context.Context, db *Component) *Component {
 // newComponent ...
 func newComponent(compName string, dsnParser manager.DSNParser, config *config, elogger *elog.Component) (*Component, error) {
 	// gorm的配置
-	gormConfig := &gorm.Config{}
+	gormConfig := &gorm.Config{
+		NamingStrategy: dsnParser.NamingStrategy(), // 使用组件的名字默认策略
+	}
 	// 如果没有开启gorm的原生日志，那么就丢弃掉，避免过多的日志信息
 	if !config.RawDebug {
 		gormConfig.Logger = logger.Discard
+	}
+
+	// 使用用户自定义的名字策略
+	if config.namingStrategy != nil {
+		gormConfig.NamingStrategy = config.namingStrategy
 	}
 
 	db, err := gorm.Open(dsnParser.GetDialector(config.DSN), gormConfig)

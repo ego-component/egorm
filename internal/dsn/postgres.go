@@ -8,6 +8,7 @@ import (
 	"github.com/ego-component/egorm/manager"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 var (
@@ -24,6 +25,10 @@ func init() {
 
 func (p *PostgresDSNParser) Scheme() string {
 	return "postgres"
+}
+
+func (p *PostgresDSNParser) NamingStrategy() schema.Namer {
+	return nil
 }
 
 func (p *PostgresDSNParser) GetDialector(dsn string) gorm.Dialector {

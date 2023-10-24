@@ -8,6 +8,7 @@ import (
 	"github.com/ego-component/egorm/manager"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 var (
@@ -26,6 +27,10 @@ func init() {
 
 func (p *MysqlDSNParser) Scheme() string {
 	return "mysql"
+}
+
+func (p *MysqlDSNParser) NamingStrategy() schema.Namer {
+	return nil
 }
 
 func (m *MysqlDSNParser) GetDialector(dsn string) gorm.Dialector {

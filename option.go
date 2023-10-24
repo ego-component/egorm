@@ -2,6 +2,7 @@ package egorm
 
 import (
 	"github.com/ego-component/egorm/manager"
+	"gorm.io/gorm/schema"
 )
 
 // Option 可选项
@@ -18,6 +19,12 @@ func WithDSN(dsn string) Option {
 func WithDSNParser(parser manager.DSNParser) Option {
 	return func(c *Container) {
 		c.dsnParser = parser
+	}
+}
+
+func WithNamingStrategy(namingStrategy schema.Namer) Option {
+	return func(c *Container) {
+		c.config.namingStrategy = namingStrategy
 	}
 }
 
