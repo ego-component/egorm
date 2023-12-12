@@ -1,8 +1,9 @@
 package egorm
 
 import (
-	"github.com/ego-component/egorm/manager"
 	"gorm.io/gorm/schema"
+
+	"github.com/ego-component/egorm/manager"
 )
 
 // Option 可选项
@@ -12,6 +13,13 @@ type Option func(c *Container)
 func WithDSN(dsn string) Option {
 	return func(c *Container) {
 		c.config.DSN = dsn
+	}
+}
+
+// WithDialect 设置 dialect
+func WithDialect(dialect string) Option {
+	return func(c *Container) {
+		c.config.Dialect = dialect
 	}
 }
 
