@@ -22,6 +22,7 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.7.0"
 	"go.opentelemetry.io/otel/trace"
 	"gorm.io/gorm"
+	"gorm.io/hints"
 
 	"github.com/ego-component/egorm/manager"
 )
@@ -155,7 +156,20 @@ func traceInterceptor(compName string, dsn *manager.DSN, _ string, options *conf
 
 				_, span := tracer.Start(db.Statement.Context, operation, nil, trace.WithAttributes(attrs...))
 				defer span.End()
-
+				comment := fmt.Sprintf("tid=%s", span.SpanContext().TraceID().String())
+				if db.Statement.SQL.Len() > 0 {
+					sql := db.Statement.SQL.String()
+					db.Statement.SQL.Reset()
+					db.Statement.SQL.WriteString("/* ")
+					db.Statement.SQL.WriteString(comment)
+					db.Statement.SQL.WriteString(" */ ")
+					db.Statement.SQL.WriteString(sql)
+				} else {
+					hints.CommentBefore("SELECT", comment).ModifyStatement(db.Statement)
+					hints.CommentBefore("INSERT", comment).ModifyStatement(db.Statement)
+					hints.CommentBefore("UPDATE", comment).ModifyStatement(db.Statement)
+					hints.CommentBefore("DELETE", comment).ModifyStatement(db.Statement)
+				}
 				next(db)
 				span.SetAttributes(
 					semconv.DBSystemKey.String(db.Dialector.Name()),
