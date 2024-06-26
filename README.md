@@ -62,7 +62,7 @@ type Config struct {
 
 ## 5.2 优雅的Debug
 通过开启``debug``配置和命令行的``export EGO_DEBUG=true``，我们就可以在测试环境里看到请求里的配置名、地址、耗时、请求数据、响应数据
-![image](https://cdn.gocn.vip/ego/assets/img/ego_debug.4672a95e.png)
+![image](./docs/images/ego_debug.png)
 当然你也可以开启``gorm``原生的调试，将``rawDebug``设置为``true``
 
 ## 5.3 用户代码
@@ -139,7 +139,7 @@ enableAccessInterceptorReq=true    # 是否开启记录请求参数
 enableAccessInterceptorRes=true    # 是否开启记录响应参数
 ```
 
-![img.png](https://cdn.gocn.vip/ego/assets/img/enable_req_res.89087f89.png)
+![img.png](./docs/images/enable_req_res.png)
 
 ### 6.3 开启日志的详细数据
 记录请求参数日志为了安全起见，默认是不开启详细的sql数据，记录的是参数绑定的SQL日志，如果需要开启详细数据，需要在配置里添加``
@@ -147,14 +147,14 @@ enableAccessInterceptorRes=true    # 是否开启记录响应参数
 [mysql.test]
 enableDetailSQL=true       # 记录sql时,是否打印包含参数的完整sql语句，select * from aid = ?;
 ```
-![img.png](https://cdn.gocn.vip/ego/assets/img/enable_req_res_detail.c932d5dc.png)
+![img.png](./docs/images/enable_req_res_detail.png)
 
 ### 6.4 开启日志的链路数据
 代码方面使用`db.WithContext(ctx)`，会在access日志中自动记录trace id信息
 
 ### 6.5 开启自定义日志字段的数据
 在使用了ego的自定义字段功能`export EGO_LOG_EXTRA_KEYS=X-Ego-Uid`，将对应的数据塞入到context中，那么gorm的access日志就可以记录对应字段信息。
-参考[详细文档](https://ego.gocn.vip/micro/chapter2/trace.html#_6-ego-access-%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE%E8%B7%AF)：
+参考[详细文档](https://ego-org.com/practice/chapter1/egotrace.html)：
 ```go
 func testDB() error {
 	var user User
