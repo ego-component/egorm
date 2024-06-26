@@ -72,10 +72,13 @@ func metricInterceptor(compName string, dsn *manager.DSN, op string, config *con
 
 			loggerKeys := transport.CustomContextKeys()
 
-			var fields = make([]elog.Field, 0, 15+len(loggerKeys))
+			var fields = make([]elog.Field, 0, 15+transport.CustomContextKeysLength())
+			event := "normal"
 			fields = append(fields,
 				elog.FieldMethod(op),
-				elog.FieldName(dsn.DBName+"."+db.Statement.Table), elog.FieldCost(cost))
+				elog.FieldName(dsn.DBName+"."+db.Statement.Table),
+				elog.FieldCost(cost),
+			)
 			if config.EnableAccessInterceptorReq {
 				fields = append(fields, elog.String("req", logSQL(db, config.EnableDetailSQL)))
 			}
@@ -84,7 +87,7 @@ func metricInterceptor(compName string, dsn *manager.DSN, op string, config *con
 			}
 
 			// 开启了链路，那么就记录链路id
-			if config.EnableTraceInterceptor && etrace.IsGlobalTracerRegistered() {
+			if etrace.IsGlobalTracerRegistered() {
 				fields = append(fields, elog.FieldTid(etrace.ExtractTraceID(db.Statement.Context)))
 			}
 
@@ -97,15 +100,18 @@ func metricInterceptor(compName string, dsn *manager.DSN, op string, config *con
 
 			// 记录监控耗时
 			emetric.ClientHandleHistogram.WithLabelValues(emetric.TypeGorm, compName, dsn.DBName+"."+db.Statement.Table, dsn.Addr).Observe(cost.Seconds())
-
-			// 如果有慢日志，就记录
+			isSlowLog := false
 			if config.SlowLogThreshold > time.Duration(0) && config.SlowLogThreshold < cost {
-				logger.Warn("slow", fields...)
+				event = "slow"
+				isSlowLog = true
 			}
 
 			// 如果有错误，记录错误信息
 			if db.Error != nil {
-				fields = append(fields, elog.FieldEvent("error"), elog.FieldErr(db.Error))
+				fields = append(fields,
+					elog.FieldEvent(event),
+					elog.FieldErr(db.Error),
+				)
 				if errors.Is(db.Error, ErrRecordNotFound) {
 					logger.Warn("access", fields...)
 					emetric.ClientHandleCounter.Inc(emetric.TypeGorm, compName, dsn.DBName+"."+db.Statement.Table, dsn.Addr, "Empty")
@@ -117,13 +123,16 @@ func metricInterceptor(compName string, dsn *manager.DSN, op string, config *con
 			}
 
 			emetric.ClientHandleCounter.Inc(emetric.TypeGorm, compName, dsn.DBName+"."+db.Statement.Table, dsn.Addr, "OK")
-			// 开启了记录日志信息，那么就记录access
-			// event normal和error，代表全部access的请求数
-			if config.EnableAccessInterceptor {
+
+			if config.EnableAccessInterceptor || isSlowLog {
 				fields = append(fields,
-					elog.FieldEvent("normal"),
+					elog.FieldEvent(event),
 				)
-				logger.Info("access", fields...)
+				if isSlowLog {
+					logger.Warn("access", fields...)
+				} else {
+					logger.Info("access", fields...)
+				}
 			}
 		}
 	}
@@ -153,7 +162,6 @@ func traceInterceptor(compName string, dsn *manager.DSN, _ string, options *conf
 				if len(db.Statement.BuildClauses) > 0 {
 					operation += strings.ToLower(db.Statement.BuildClauses[0])
 				}
-
 				_, span := tracer.Start(db.Statement.Context, operation, nil, trace.WithAttributes(attrs...))
 				defer span.End()
 				comment := fmt.Sprintf("tid=%s", span.SpanContext().TraceID().String())
