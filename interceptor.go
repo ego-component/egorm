@@ -70,8 +70,6 @@ func metricInterceptor(compName string, dsn *manager.DSN, op string, config *con
 			next(db)
 			cost := time.Since(beg)
 
-			loggerKeys := transport.CustomContextKeys()
-
 			var fields = make([]elog.Field, 0, 15+transport.CustomContextKeysLength())
 			event := "normal"
 			fields = append(fields,
@@ -85,14 +83,13 @@ func metricInterceptor(compName string, dsn *manager.DSN, op string, config *con
 			if config.EnableAccessInterceptorRes {
 				fields = append(fields, elog.Any("res", db.Statement.Dest))
 			}
-
 			// 开启了链路，那么就记录链路id
 			if etrace.IsGlobalTracerRegistered() {
 				fields = append(fields, elog.FieldTid(etrace.ExtractTraceID(db.Statement.Context)))
 			}
 
 			// 支持自定义log
-			for _, key := range loggerKeys {
+			for _, key := range transport.CustomContextKeys() {
 				if value := getContextValue(db.Statement.Context, key); value != "" {
 					fields = append(fields, elog.FieldCustomKeyValue(key, value))
 				}
@@ -113,9 +110,16 @@ func metricInterceptor(compName string, dsn *manager.DSN, op string, config *con
 					elog.FieldErr(db.Error),
 				)
 				if errors.Is(db.Error, ErrRecordNotFound) {
-					logger.Warn("access", fields...)
+					// 这种日志可能很多，也没必要，只有开启的时候，或者慢日志的时候记录
+					if config.EnableAccessInterceptor || isSlowLog {
+						logger.Warn("access", fields...)
+					}
 					emetric.ClientHandleCounter.Inc(emetric.TypeGorm, compName, dsn.DBName+"."+db.Statement.Table, dsn.Addr, "Empty")
 					return
+				}
+				// 如果用户没开启req，那么错误必记录Req
+				if !config.EnableAccessInterceptorReq {
+					fields = append(fields, elog.String("req", logSQL(db, true)))
 				}
 				logger.Error("access", fields...)
 				emetric.ClientHandleCounter.Inc(emetric.TypeGorm, compName, dsn.DBName+"."+db.Statement.Table, dsn.Addr, "Error")
