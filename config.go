@@ -27,6 +27,7 @@ type config struct {
 	EnableAccessInterceptor    bool          // 是否开启，记录请求数据
 	EnableAccessInterceptorReq bool          // 是否开启记录请求参数
 	EnableAccessInterceptorRes bool          // 是否开启记录响应参数
+	TranslateError             bool          // 是否开启错误转换，开启后会将标准包的 error 封装为 GORM error
 	interceptors               []Interceptor
 	dsnCfg                     *manager.DSN
 	// TLS 参数支持
@@ -48,5 +49,6 @@ func DefaultConfig() *config {
 		SlowLogThreshold:        xtime.Duration("500ms"),
 		EnableMetricInterceptor: true,
 		EnableTraceInterceptor:  true,
+		TranslateError:          true,
 	}
 }
