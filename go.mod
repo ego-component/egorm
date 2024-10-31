@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/go-sql-driver/mysql v1.6.0
+	github.com/go-sql-driver/mysql v1.7.0
 	github.com/gotomicro/ego v1.0.3
 	github.com/json-iterator/go v1.1.12
 	github.com/spf13/cast v1.3.1
@@ -13,10 +13,10 @@ require (
 	go.opentelemetry.io/otel/trace v1.4.1
 	google.golang.org/grpc v1.44.0
 	gorm.io/driver/clickhouse v0.3.2
-	gorm.io/driver/mysql v1.3.3
+	gorm.io/driver/mysql v1.5.7
 	gorm.io/driver/postgres v1.3.5
 	gorm.io/driver/sqlserver v1.5.1
-	gorm.io/gorm v1.25.1
+	gorm.io/gorm v1.25.7
 	gorm.io/hints v1.1.2
 )
 
@@ -74,9 +74,9 @@ require (
 	go.uber.org/zap v1.17.0 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
-	golang.org/x/sync v0.1.0 // indirect
+	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
-	golang.org/x/text v0.9.0 // indirect
+	golang.org/x/text v0.19.0 // indirect
 	google.golang.org/genproto v0.0.0-20220310185008-1973136f34c6 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

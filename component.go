@@ -52,6 +52,7 @@ func newComponent(compName string, dsnParser manager.DSNParser, config *config, 
 	// gorm的配置
 	gormConfig := &gorm.Config{
 		NamingStrategy: dsnParser.NamingStrategy(), // 使用组件的名字默认策略
+		TranslateError: config.TranslateError,
 	}
 	// 如果没有开启gorm的原生日志，那么就丢弃掉，避免过多的日志信息
 	if !config.RawDebug {
