@@ -95,3 +95,9 @@ func WithSlowLogThreshold(slowLogThreshold time.Duration) Option {
 		c.config.SlowLogThreshold = slowLogThreshold
 	}
 }
+
+func WithEnableDetailSQL(enableDetailSQL bool) Option {
+	return func(c *Container) {
+		c.config.EnableDetailSQL = enableDetailSQL
+	}
+}
