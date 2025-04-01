@@ -1,6 +1,8 @@
 package egorm
 
 import (
+	"time"
+
 	"gorm.io/gorm/schema"
 
 	"github.com/ego-component/egorm/manager"
@@ -43,5 +45,53 @@ func WithInterceptor(is ...Interceptor) Option {
 			c.config.interceptors = make([]Interceptor, 0)
 		}
 		c.config.interceptors = append(c.config.interceptors, is...)
+	}
+}
+
+func WithEnableAccessInterceptor(enableAccessInterceptor bool) Option {
+	return func(c *Container) {
+		c.config.EnableAccessInterceptor = enableAccessInterceptor
+	}
+}
+
+func WithEnableAccessInterceptorReq(enableAccessInterceptorReq bool) Option {
+	return func(c *Container) {
+		c.config.EnableAccessInterceptorReq = enableAccessInterceptorReq
+	}
+}
+
+func WithEnableAccessInterceptorRes(enableAccessInterceptorRes bool) Option {
+	return func(c *Container) {
+		c.config.EnableAccessInterceptorRes = enableAccessInterceptorRes
+	}
+}
+
+func WithMaxIdleConns(maxIdleConns int) Option {
+	return func(c *Container) {
+		c.config.MaxIdleConns = maxIdleConns
+	}
+}
+
+func WithMaxOpenConns(maxOpenConns int) Option {
+	return func(c *Container) {
+		c.config.MaxOpenConns = maxOpenConns
+	}
+}
+
+func WithConnMaxLifetime(connMaxLifetime time.Duration) Option {
+	return func(c *Container) {
+		c.config.ConnMaxLifetime = connMaxLifetime
+	}
+}
+
+func WithOnFail(onFail string) Option {
+	return func(c *Container) {
+		c.config.OnFail = onFail
+	}
+}
+
+func WithSlowLogThreshold(slowLogThreshold time.Duration) Option {
+	return func(c *Container) {
+		c.config.SlowLogThreshold = slowLogThreshold
 	}
 }
