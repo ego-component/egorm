@@ -61,6 +61,7 @@ type Config struct {
     insecureSkipVerify=true
 ```
 
+
 ## 5.2 优雅的Debug
 通过开启``debug``配置和命令行的``export EGO_DEBUG=true``，我们就可以在测试环境里看到请求里的配置名、地址、耗时、请求数据、响应数据
 ![image](./docs/images/ego_debug.png)
@@ -125,6 +126,7 @@ func testDB() error {
 	return err
 }
 ```
+
 ## 6 GORM的日志
 任何gorm的请求都会记录gorm的错误access日志，如果需要对gorm的日志做定制化处理，可参考以下使用方式。
 
